@@ -3,7 +3,6 @@ package meta
 
 import (
 	"fmt"
-	"io"
 )
 
 func ExampleIsUntypedNil() {
@@ -12,7 +11,7 @@ func ExampleIsUntypedNil() {
 	var p1 *int
 	fmt.Println(IsUntypedNil(p1)) // false
 
-	var p2 io.Writer
+	var p2 error                  // error is an interface
 	fmt.Println(IsUntypedNil(p2)) // true
 
 	// Output:
@@ -27,7 +26,7 @@ func ExampleIsTypedNil() {
 	var p1 *int
 	fmt.Println(IsTypedNil(p1)) // true
 
-	var p2 io.Writer
+	var p2 error                // error is an interface
 	fmt.Println(IsTypedNil(p2)) // false
 
 	// Output:
