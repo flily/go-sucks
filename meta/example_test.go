@@ -37,6 +37,7 @@ func ExampleIsTypedNil() {
 }
 
 func ExampleIsNil_why() {
+	// Go sucks. It's not possible to compare a typed nil to nil.
 	var err error
 	fmt.Printf("(nil == nil) -> %v\n", err == nil) // true
 	fmt.Printf("type = %T\n", err)                 // <nil>
@@ -44,9 +45,6 @@ func ExampleIsNil_why() {
 	u1, t1 := IsNil(err)
 	fmt.Printf("IsNil(err) -> %v, %v\n", u1, t1) // true, false
 
-	// type defined outside of block:
-	// type exampleError struct{}
-	// func (e *exampleError) Error() string { return "example error" }
 	err = func() error {
 		// some function returns an error but you don't know what type it actually is.
 		return func() error {
