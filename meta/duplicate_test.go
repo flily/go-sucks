@@ -333,6 +333,7 @@ func TestDuplicateNormalData(t *testing.T) {
 		0,
 		42,
 		0.0,
+		uint(42),
 		3.1415926,
 		"",
 		"lorem ipsum",
@@ -468,6 +469,10 @@ func TestDuplicateInterface(t *testing.T) {
 	}
 	var err error = raw
 	ep := &err
+
+	epv := reflect.ValueOf(ep)
+	ev := epv.Elem()
+	t.Errorf("ev: %s", ev.Kind())
 
 	got, err := Duplicate(ep)
 	if err != nil {

@@ -1,4 +1,5 @@
 // meta package provides abilities to meta-programming, and makes reflect package make sense.
+// Functions in this package MUST NOT panic.
 package meta
 
 import (
