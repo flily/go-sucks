@@ -271,6 +271,33 @@ func TestDuplicateForSimpleStructWithPrivateMap(t *testing.T) {
 	}
 }
 
+func TestDuplicateForSimpleStructWithChannelField(t *testing.T) {
+	type testStruct struct {
+		Name string
+		Age  int
+		Ch   chan int
+	}
+
+	data := testStruct{
+		Name: "Harry Potter",
+		Age:  13,
+		Ch:   make(chan int),
+	}
+
+	got, err := Duplicate(data)
+	if err == nil {
+		t.Errorf("expected error, got nil")
+	}
+
+	if err.Error() != "kind chan is not duplicatable" {
+		t.Errorf("unexpected error: %v", err)
+	}
+
+	if got != nil {
+		t.Errorf("expected nil, but got %#v (%s)", got, reflect.TypeOf(got))
+	}
+}
+
 func TestDuplicateNil(t *testing.T) {
 	{
 		var n *int
@@ -448,13 +475,69 @@ func TestDuplicatePointerArray(t *testing.T) {
 	}
 }
 
+func TestDuplicateArrayError(t *testing.T) {
+	c := make(chan int, 1)
+	a := []interface{}{1, c}
+
+	got, err := Duplicate(a)
+	if err == nil {
+		t.Errorf("expected error, got nil")
+	}
+
+	if got != nil {
+		t.Errorf("unexpected result: %#v (%T)", got, got)
+	}
+}
+
+func TestDuplicateMapError(t *testing.T) {
+	ch := make(chan int, 1)
+
+	{
+		m := map[chan int]int{
+			ch: 42,
+		}
+
+		got, err := Duplicate(m)
+		if err == nil {
+			t.Errorf("expected error, got nil")
+		}
+
+		if err.Error() != "kind chan is not duplicatable" {
+			t.Errorf("unexpected error: %v", err)
+		}
+
+		if got != nil {
+			t.Errorf("unexpected result: %#v (%T)", got, got)
+		}
+	}
+
+	{
+		m := map[int]chan int{
+			42: ch,
+		}
+
+		got, err := Duplicate(m)
+		if err == nil {
+			t.Errorf("expected error, got nil")
+		}
+
+		if err.Error() != "kind chan is not duplicatable" {
+			t.Errorf("unexpected error: %v", err)
+		}
+
+		if got != nil {
+			t.Errorf("unexpected result: %#v (%T)", got, got)
+		}
+	}
+}
+
 func TestDuplicateChannel(t *testing.T) {
 	c := make(chan int, 1)
 	c <- 1
 
 	got, err := Duplicate(c)
 	if err == nil {
-		t.Errorf("unexpected nil error")
+		t.Errorf("expected error, got nil")
 	}
 
 	if got != nil {
@@ -462,7 +545,8 @@ func TestDuplicateChannel(t *testing.T) {
 	}
 }
 
-func TestDuplicateInterface(t *testing.T) {
+func TestDuplicateStructInterface(t *testing.T) {
+	// This case do not go into duplicateInterface
 	raw := &net.AddrError{
 		Err:  "test",
 		Addr: "lorem ipsum",
@@ -488,5 +572,26 @@ func TestDuplicateInterface(t *testing.T) {
 	if (*gotInfo).Addr != raw.Addr || (*gotInfo).Err != raw.Err {
 		t.Errorf("unexpected result: %#v (%T) <=> %#v (%T)",
 			gotInfo, gotInfo, raw, raw)
+	}
+}
+
+func TestDuplicateAnyInterface(t *testing.T) {
+	a := []interface{}{
+		nil,
+		1,
+		1.2,
+		&net.AddrError{
+			Err: "test",
+		},
+	}
+
+	got, err := Duplicate(a)
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+
+	if !InstanceEqual(a, got) {
+		t.Errorf("unexpected result: %#v (%T) <=> %#v (%T)",
+			got, got, a, a)
 	}
 }
