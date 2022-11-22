@@ -88,42 +88,22 @@ func equalForFloat(a reflect.Value, b reflect.Value) bool {
 	return a.Float() == b.Float()
 }
 
+func equalForComplex(a reflect.Value, b reflect.Value) bool {
+	return a.Complex() == b.Complex()
+}
+
 func equalForString(a reflect.Value, b reflect.Value) bool {
 	return a.String() == b.String()
 }
 
-func equalForValue(a reflect.Value, b reflect.Value) bool {
-	if !a.IsValid() || !b.IsValid() {
-		isAUntypedNil, isATypedNil := IsNilValue(a)
-		isBUntypedNil, isBTypedNil := IsNilValue(b)
-		return (isAUntypedNil || isATypedNil) && (isBUntypedNil || isBTypedNil)
-	}
+func equalForUntypedNil(a reflect.Value, b reflect.Value) bool {
+	isAUntypedNil, isATypedNil := IsNilValue(a)
+	isBUntypedNil, isBTypedNil := IsNilValue(b)
+	return (isAUntypedNil || isATypedNil) && (isBUntypedNil || isBTypedNil)
+}
 
-	if a.Type() != b.Type() {
-		return false
-	}
-
+func equalForSameKindValue(a reflect.Value, b reflect.Value) bool {
 	switch a.Kind() {
-	case reflect.Chan:
-		return false
-
-	case reflect.Func, reflect.UnsafePointer:
-		return a.Pointer() == b.Pointer()
-
-	case reflect.Array, reflect.Slice:
-		return equalForArray(a, b)
-
-	case reflect.Map:
-		return equalForMap(a, b)
-
-	case reflect.Interface, reflect.Ptr:
-		ea := a.Elem()
-		eb := b.Elem()
-		return equalForValue(ea, eb)
-
-	case reflect.Struct:
-		return equalForStruct(a, b)
-
 	case reflect.Bool:
 		return equalForBool(a, b)
 
@@ -136,12 +116,44 @@ func equalForValue(a reflect.Value, b reflect.Value) bool {
 	case reflect.Float32, reflect.Float64:
 		return equalForFloat(a, b)
 
+	case reflect.Complex64, reflect.Complex128:
+		return equalForComplex(a, b)
+
+	case reflect.Array, reflect.Slice:
+		return equalForArray(a, b)
+
+	case reflect.Chan, reflect.Func, reflect.UnsafePointer:
+		return a.Pointer() == b.Pointer()
+
+	case reflect.Interface, reflect.Ptr:
+		ea := a.Elem()
+		eb := b.Elem()
+		return equalForValue(ea, eb)
+
+	case reflect.Map:
+		return equalForMap(a, b)
+
+	case reflect.Struct:
+		return equalForStruct(a, b)
+
 	case reflect.String:
 		return equalForString(a, b)
 
 	default:
 		return false
 	}
+}
+
+func equalForValue(a reflect.Value, b reflect.Value) bool {
+	if !a.IsValid() || !b.IsValid() {
+		return equalForUntypedNil(a, b)
+	}
+
+	if a.Type() != b.Type() {
+		return false
+	}
+
+	return equalForSameKindValue(a, b)
 }
 
 func ValueEqual(a reflect.Value, b reflect.Value) bool {
