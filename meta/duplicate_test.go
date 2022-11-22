@@ -470,10 +470,6 @@ func TestDuplicateInterface(t *testing.T) {
 	var err error = raw
 	ep := &err
 
-	epv := reflect.ValueOf(ep)
-	ev := epv.Elem()
-	t.Errorf("ev: %s", ev.Kind())
-
 	got, err := Duplicate(ep)
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
