@@ -39,8 +39,7 @@ func IsValueUntypedNil(value reflect.Value) bool {
 // IsUntypedNil returns result whether the value is an untyped nil.
 // An untyped nil is the nil literal, or an interface variable which is not bound to a value.
 func IsUntypedNil(value interface{}) bool {
-	v := reflect.ValueOf(value)
-	return IsValueUntypedNil(v)
+	return ValueOf(value).IsUntypedNil()
 }
 
 // IsValueTypedNil returns result whether the value is a typed nil.
@@ -53,8 +52,7 @@ func IsValueTypedNil(value reflect.Value) bool {
 // IsTypedNil returns result whether the value is a typed nil.
 // A typed nil is a nil pointer that the type of the instance that points to can be determined.
 func IsTypedNil(value interface{}) bool {
-	v := reflect.ValueOf(value)
-	return IsValueTypedNil(v)
+	return ValueOf(value).IsTypedNil()
 }
 
 // IsPointer returns result whether the value is a pointer.
