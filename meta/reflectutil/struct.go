@@ -1,4 +1,4 @@
-package meta
+package reflectutil
 
 import (
 	"reflect"
@@ -13,7 +13,7 @@ func GetStructFieldValue(data interface{}, field string) (reflect.Value, error) 
 	var err error
 	fieldValue := dataValue.FieldByName(field)
 	if !fieldValue.IsValid() {
-		err = NewMetaError("no field '%s'", field)
+		err = ErrReflect.Derive("no field '%s'", field)
 	}
 
 	return fieldValue, err
@@ -35,10 +35,10 @@ func SetStructFieldValue(data interface{}, field string, value reflect.Value) (i
 	}
 
 	if !fieldValue.CanSet() {
-		return nil, NewMetaError("field '%s' can not be set", field)
+		return nil, ErrReflect.Derive("field '%s' can not be set", field)
 	}
 
-	untypedNil, typedNil := IsNilValue(value)
+	untypedNil, typedNil := NilType(value)
 	if untypedNil {
 		newNil := NewTypedNil(fieldValue.Type())
 		fieldValue.Set(newNil)
@@ -54,7 +54,7 @@ func SetStructFieldValue(data interface{}, field string, value reflect.Value) (i
 				fieldValue.Set(convertedValue)
 
 			} else {
-				return nil, NewMetaError("field '%s' requires type %s, but %s",
+				return nil, ErrReflect.Derive("field '%s' requires type %s, but %s",
 					field, fieldValue.Type(), value.Type())
 			}
 

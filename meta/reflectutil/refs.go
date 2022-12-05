@@ -1,4 +1,4 @@
-package meta
+package reflectutil
 
 import (
 	"reflect"
@@ -9,13 +9,13 @@ const (
 	ElemPointer   = 1
 )
 
-type ValueReferenceInfo struct {
+type ReferenceInfo struct {
 	ElemType   int
 	SourceType reflect.Type
 }
 
-// IsValueInstance returns true if value is an instance, which can not dereference.
-func IsValueInstance(value reflect.Value) bool {
+// IsInstance returns true if value is an instance, which can not dereference.
+func IsInstance(value reflect.Value) bool {
 	switch value.Kind() {
 	case reflect.Interface:
 		return false
@@ -28,12 +28,12 @@ func IsValueInstance(value reflect.Value) bool {
 	}
 }
 
-// ValueToInstance returns the instance value and the reference information chain of the value.
-func ValueToInstance(value reflect.Value) (reflect.Value, []ValueReferenceInfo) {
-	refChain := make([]ValueReferenceInfo, 0, 4)
+// DereferenceToInstance returns the instance value and the reference information chain of the value.
+func DereferenceToInstance(value reflect.Value) (reflect.Value, []ReferenceInfo) {
+	refChain := make([]ReferenceInfo, 0, 4)
 
-	for !IsValueInstance(value) {
-		info := ValueReferenceInfo{
+	for !IsInstance(value) {
+		info := ReferenceInfo{
 			SourceType: value.Type(),
 		}
 
@@ -52,11 +52,11 @@ func ValueToInstance(value reflect.Value) (reflect.Value, []ValueReferenceInfo) 
 	return value, refChain
 }
 
-// ValueInstanceChainOf gets the instance of a value, dereference all levels.
+// ReferenceChainOf gets the instance of a value, dereference all levels.
 // Return final value, and dereferenced chain.
-func ValueInstanceChainOf(data interface{}) (reflect.Value, []ValueReferenceInfo) {
+func ReferenceChainOf(data interface{}) (reflect.Value, []ReferenceInfo) {
 	value := reflect.ValueOf(data)
-	return ValueToInstance(value)
+	return DereferenceToInstance(value)
 }
 
 // InstanceOf gets the actual instance of a value, dereference all levels.
@@ -64,17 +64,12 @@ func ValueInstanceChainOf(data interface{}) (reflect.Value, []ValueReferenceInfo
 // got, return an invalid reflect.Value, which is returned by reflect.ValueOf().
 func InstanceOf(data interface{}) reflect.Value {
 	value := reflect.ValueOf(data)
-	return ValueInstanceOf(value)
-}
-
-// ValueInstanceOf gets the instance of a value, dereference all levels.
-func ValueInstanceOf(value reflect.Value) reflect.Value {
-	final, _ := ValueToInstance(value)
-	return final
+	instance, _ := DereferenceToInstance(value)
+	return instance
 }
 
 // OriginOf makes original type value via reference chain.
-func OriginOf(value reflect.Value, chain []ValueReferenceInfo) reflect.Value {
+func OriginOf(value reflect.Value, chain []ReferenceInfo) reflect.Value {
 	if len(chain) <= 0 {
 		return value
 	}

@@ -1,40 +1,21 @@
 package meta
 
 import (
-	"errors"
-	"fmt"
 	"reflect"
+
+	"github.com/flily/go-sucks/errors"
 )
 
 var (
-	ErrMetaError      = errors.New("meta error")
-	ErrNotDuplcatable = NewMetaError("not duplicatable")
-	ErrUntypedNil     = NewMetaError("untyped nil is unacceptable")
+	ErrMetaError      = errors.NewError("meta error")
+	ErrNotDuplcatable = ErrMetaError.Derive("not duplicatable")
+	ErrUntypedNil     = ErrMetaError.Derive("untyped nil is unacceptable")
 )
 
-type metaError struct {
-	Base    error
-	Message string
-}
-
-func (e metaError) Error() string {
-	return e.Message
-}
-
-func (e metaError) Unwrap() error {
-	return e.Base
-}
-
 func NewMetaError(format string, args ...interface{}) error {
-	return metaError{
-		Base:    ErrMetaError,
-		Message: fmt.Sprintf(format, args...),
-	}
+	return ErrMetaError.Derive(format, args...)
 }
 
 func NewNotDuplicatableError(kind reflect.Kind) error {
-	return &metaError{
-		Base:    ErrNotDuplcatable,
-		Message: fmt.Sprintf("kind %s is not duplicatable", kind),
-	}
+	return ErrNotDuplcatable.Derive("kind %s is not duplicatable", kind)
 }

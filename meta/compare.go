@@ -2,6 +2,8 @@ package meta
 
 import (
 	"reflect"
+
+	"github.com/flily/go-sucks/meta/reflectutil"
 )
 
 func equalForArray(a reflect.Value, b reflect.Value) bool {
@@ -97,8 +99,8 @@ func equalForString(a reflect.Value, b reflect.Value) bool {
 }
 
 func equalForUntypedNil(a reflect.Value, b reflect.Value) bool {
-	isAUntypedNil, isATypedNil := IsNilValue(a)
-	isBUntypedNil, isBTypedNil := IsNilValue(b)
+	isAUntypedNil, isATypedNil := reflectutil.NilType(a)
+	isBUntypedNil, isBTypedNil := reflectutil.NilType(b)
 	return (isAUntypedNil || isATypedNil) && (isBUntypedNil || isBTypedNil)
 }
 

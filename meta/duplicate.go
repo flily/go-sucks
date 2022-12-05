@@ -3,6 +3,8 @@ package meta
 import (
 	"reflect"
 	"unsafe"
+
+	"github.com/flily/go-sucks/meta/reflectutil"
 )
 
 // Make a new unsafe reference to the value.
@@ -35,7 +37,7 @@ func UnsafeValueSet(target reflect.Value, source reflect.Value) {
 	targetPointer := unsafe.Pointer(target.UnsafeAddr())
 	targetUnsafe := reflect.NewAt(target.Type(), targetPointer).Elem()
 
-	if u, t := IsNilValue(source); !u && !t {
+	if u, t := reflectutil.NilType(source); !u && !t {
 		unsafeSource := MakeUnsafeRef(source)
 		targetUnsafe.Set(unsafeSource)
 	}
@@ -81,7 +83,7 @@ func duplicateValueForMap(data reflect.Value) (reflect.Value, error) {
 }
 
 func duplicateValueForStruct(data reflect.Value) (reflect.Value, error) {
-	newStruct := NewEmptyValueOfValue(data)
+	newStruct := reflectutil.NewEmptyValueOfValue(data)
 
 	for i := 0; i < data.NumField(); i++ {
 		fieldValue := data.Field(i)
@@ -98,43 +100,43 @@ func duplicateValueForStruct(data reflect.Value) (reflect.Value, error) {
 }
 
 func duplicateForBool(data reflect.Value) (reflect.Value, error) {
-	result := NewEmptyValueOfValue(data)
+	result := reflectutil.NewEmptyValueOfValue(data)
 	result.SetBool(data.Bool())
 	return result, nil
 }
 
 func duplicateForInt(data reflect.Value) (reflect.Value, error) {
-	result := NewEmptyValueOfValue(data)
+	result := reflectutil.NewEmptyValueOfValue(data)
 	result.SetInt(data.Int())
 	return result, nil
 }
 
 func duplicateForUint(data reflect.Value) (reflect.Value, error) {
-	result := NewEmptyValueOfValue(data)
+	result := reflectutil.NewEmptyValueOfValue(data)
 	result.SetUint(data.Uint())
 	return result, nil
 }
 
 func duplicateForFloat(data reflect.Value) (reflect.Value, error) {
-	result := NewEmptyValueOfValue(data)
+	result := reflectutil.NewEmptyValueOfValue(data)
 	result.SetFloat(data.Float())
 	return result, nil
 }
 
 func duplicateForString(data reflect.Value) (reflect.Value, error) {
-	result := NewEmptyValueOfValue(data)
+	result := reflectutil.NewEmptyValueOfValue(data)
 	result.SetString(data.String())
 	return result, nil
 }
 
 func duplicateForPointer(data reflect.Value) (reflect.Value, error) {
-	result := NewEmptyValueOfValue(data)
+	result := reflectutil.NewEmptyValueOfValue(data)
 	UnsafeValueSet(result, data)
 	return result, nil
 }
 
 func duplicateForInterface(data reflect.Value) (reflect.Value, error) {
-	value := NewEmptyValueOfValue(data)
+	value := reflectutil.NewEmptyValueOfValue(data)
 	src := data
 
 	for src.Kind() == reflect.Interface {
@@ -151,14 +153,14 @@ func duplicateForInterface(data reflect.Value) (reflect.Value, error) {
 }
 
 func duplicateForNilValue(data reflect.Value) (reflect.Value, error) {
-	result := NewValueOfType(data.Type())
+	result := reflectutil.NewValueOfType(data.Type())
 	return result, nil
 }
 
 func duplicateValueInstance(data reflect.Value) (reflect.Value, error) {
-	isUntypedNil, isTypedNil := IsNilValue(data)
+	isUntypedNil, isTypedNil := reflectutil.NilType(data)
 	if isUntypedNil {
-		return NewUntypedNil(), ErrUntypedNil
+		return reflectutil.NewUntypedNil(), ErrUntypedNil
 
 	} else if isTypedNil {
 		return duplicateForNilValue(data)
@@ -206,7 +208,7 @@ func duplicateValueInstance(data reflect.Value) (reflect.Value, error) {
 }
 
 func DuplicateValueInstance(value reflect.Value) (reflect.Value, error) {
-	valueInstance := ValueInstanceOf(value)
+	valueInstance, _ := reflectutil.DereferenceToInstance(value)
 	return duplicateValueInstance(valueInstance)
 }
 
@@ -216,12 +218,12 @@ func Duplicate(data interface{}) (interface{}, error) {
 		return nil, ErrUntypedNil
 	}
 
-	instanceValue, chain := ValueToInstance(dataValue)
+	instanceValue, chain := reflectutil.DereferenceToInstance(dataValue)
 	copy, err := duplicateValueInstance(instanceValue)
 	if err != nil {
 		return nil, err
 	}
 
-	source := OriginOf(copy, chain)
+	source := reflectutil.OriginOf(copy, chain)
 	return source.Interface(), nil
 }

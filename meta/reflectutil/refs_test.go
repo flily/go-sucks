@@ -1,10 +1,30 @@
-package meta
+package reflectutil
 
 import (
-	"testing"
-
 	"reflect"
+	"testing"
 )
+
+type ttTypeCastData struct {
+	Name string
+	Age  int
+}
+
+func (t *ttTypeCastData) Say(word string) string {
+	return t.Name + " says " + word
+}
+
+func (t ttTypeCastData) Shout(word string) string {
+	return t.Name + " shouts " + word + "!"
+}
+
+type ttTypeSayingInterface interface {
+	Say(string) string
+}
+
+type ttTypeShoutingInterface interface {
+	Shout(string) string
+}
 
 func TestInstanceOf(t *testing.T) {
 	data := 3
@@ -78,7 +98,7 @@ func TestOrigineOf(t *testing.T) {
 			t.Errorf("%s is not pointer", v.Kind())
 		}
 
-		ins, chain := ValueInstanceChainOf(inf)
+		ins, chain := ReferenceChainOf(inf)
 		ori := OriginOf(ins, chain)
 
 		if *(ori.Interface().(*ttTypeCastData)) != *ptr {
@@ -94,7 +114,7 @@ func TestOrigineOf(t *testing.T) {
 			t.Errorf("%s is not Struct", v.Kind())
 		}
 
-		ins, chain := ValueInstanceChainOf(inf)
+		ins, chain := ReferenceChainOf(inf)
 		ori := OriginOf(ins, chain)
 
 		if ori.Interface() != data {
@@ -111,7 +131,7 @@ func TestOrigineOf(t *testing.T) {
 			t.Errorf("%s is not pointer", v.Kind())
 		}
 
-		ins, chain := ValueInstanceChainOf(inf)
+		ins, chain := ReferenceChainOf(inf)
 		ori := OriginOf(ins, chain)
 
 		p, ok := ori.Interface().(*ttTypeSayingInterface)

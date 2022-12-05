@@ -2,11 +2,13 @@ package meta
 
 import (
 	"reflect"
+
+	"github.com/flily/go-sucks/meta/reflectutil"
 )
 
 func InstanceEqual(a interface{}, b interface{}) bool {
-	ia := InstanceOf(a)
-	ib := InstanceOf(b)
+	ia := reflectutil.InstanceOf(a)
+	ib := reflectutil.InstanceOf(b)
 
 	return ValueEqual(ia, ib)
 }
@@ -35,8 +37,8 @@ func iArrayEqual(a interface{}, b interface{}, compareInstance bool) (bool, erro
 		itemB := valueB.Index(i)
 
 		if compareInstance {
-			itemA = ValueInstanceOf(itemA)
-			itemB = ValueInstanceOf(itemB)
+			itemA, _ = reflectutil.DereferenceToInstance(itemA)
+			itemB, _ = reflectutil.DereferenceToInstance(itemB)
 		}
 
 		if !ValueEqual(itemA, itemB) {
@@ -94,7 +96,7 @@ func iArrayItemEqual(a interface{}, b interface{}, compareInstance bool) (bool, 
 	for i := 0; i < lengthA; i++ {
 		itemA := valueA.Index(i)
 		if compareInstance {
-			itemA = ValueInstanceOf(itemA)
+			itemA, _ = reflectutil.DereferenceToInstance(itemA)
 		}
 
 		matched := false
@@ -106,7 +108,7 @@ func iArrayItemEqual(a interface{}, b interface{}, compareInstance bool) (bool, 
 
 			itemB := valueB.Index(j)
 			if compareInstance {
-				itemB = ValueInstanceOf(itemB)
+				itemB, _ = reflectutil.DereferenceToInstance(itemB)
 			}
 
 			if ValueEqual(itemA, itemB) {

@@ -5,6 +5,8 @@ import (
 	"testing"
 
 	"reflect"
+
+	"github.com/flily/go-sucks/meta/reflectutil"
 )
 
 func TestDuplicateForSimpleValue(t *testing.T) {
@@ -350,7 +352,7 @@ func TestDuplicateNilValue(t *testing.T) {
 		t.Errorf("unexpected result: %#v (%T)", copy, copy)
 	}
 
-	if u, n := IsNilValue(copy); !u || n {
+	if u, n := reflectutil.NilType(copy); !u || n {
 		t.Errorf("unexpected result: %#v (%T)", copy, copy)
 	}
 }

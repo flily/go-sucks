@@ -1,4 +1,4 @@
-package meta
+package reflectutil
 
 import (
 	"testing"
@@ -187,10 +187,6 @@ func TestSetStructFieldWithConvert(t *testing.T) {
 		t.Errorf("pointer must not be equal")
 	}
 
-	if !InstanceEqual(hermione, expected) {
-		t.Errorf("unexpected data: %v <=> %v", hermione, expected)
-	}
-
 	if !reflect.DeepEqual(hermione, expected) {
 		t.Errorf("unexpected data: %v <=> %v", hermione, expected)
 	}
@@ -209,12 +205,8 @@ func TestSetStructFieldWithUntypedNil(t *testing.T) {
 	}
 
 	data, err := SetStructField(hermione, "Wand", nil)
-	if u, n := IsNil(data); !u && !n {
-		t.Errorf("unexpected data: %v <=> %v", data, nil)
-	}
-
-	if !IsTypedNil(data) {
-		t.Errorf("unexpected data: %v <=> %v", data, nil)
+	if data != (*testWandType)(nil) {
+		t.Errorf("unexpected data: %v (%T) <=> %v", data, data, nil)
 	}
 
 	if data != hermione.Wand {
@@ -240,12 +232,8 @@ func TestSetStructFieldWithTypedNil(t *testing.T) {
 
 	var wand *testWandType
 	data, err := SetStructField(hermione, "Wand", wand)
-	if u, n := IsNil(data); !u && !n {
-		t.Errorf("unexpected data: %v <=> %v", data, nil)
-	}
-
-	if !IsTypedNil(data) {
-		t.Errorf("unexpected data: %v <=> %v", data, nil)
+	if data != (*testWandType)(nil) {
+		t.Errorf("unexpected data: %v (%T) <=> %v", data, data, nil)
 	}
 
 	if data != hermione.Wand {
