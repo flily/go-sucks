@@ -2,6 +2,8 @@ package meta
 
 import (
 	"reflect"
+
+	"github.com/flily/go-sucks/meta/reflectutil"
 )
 
 // Value is a wrapper of reflect.Value. Provide methods that make sense for meta programming
@@ -25,19 +27,7 @@ func (v Value) Value() reflect.Value {
 // IsNilV returns result whether the value is nil. The first return value is true when the value
 // is an untyped nil. The second return value is true when the value is a typed nil.
 func (v Value) NilType() (bool, bool) {
-	switch v.value.Kind() {
-	case reflect.Invalid:
-		return true, false
-
-	case reflect.Chan, reflect.Func, reflect.Map, reflect.Ptr, reflect.UnsafePointer:
-		return false, v.value.IsNil()
-
-	case reflect.Interface, reflect.Slice:
-		return false, v.value.IsNil()
-
-	default:
-		return false, false
-	}
+	return reflectutil.NilType(v.value)
 }
 
 // IsNil returns result whether the value is nil, including both untyped nil and typed nil.
