@@ -1,9 +1,9 @@
 package meta
 
 import (
-	"net"
 	"testing"
 
+	"net"
 	"reflect"
 
 	"github.com/flily/go-sucks/meta/reflectutil"

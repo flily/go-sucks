@@ -1,8 +1,9 @@
 package reflectutil
 
 import (
-	"reflect"
 	"testing"
+
+	"reflect"
 )
 
 func TestNilType(t *testing.T) {

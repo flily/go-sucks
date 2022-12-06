@@ -1,8 +1,9 @@
 package meta
 
 import (
-	"reflect"
 	"testing"
+
+	"reflect"
 )
 
 func TestValueIsNil(t *testing.T) {
