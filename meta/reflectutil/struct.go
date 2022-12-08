@@ -4,14 +4,17 @@ import (
 	"reflect"
 )
 
-func GetStructFieldValue(data interface{}, field string) (reflect.Value, error) {
-	dataValue := reflect.ValueOf(data)
-	if dataValue.Kind() == reflect.Ptr {
-		dataValue = dataValue.Elem()
+func GetStructField(data reflect.Value, field string) (reflect.Value, error) {
+	if data.Kind() == reflect.Ptr {
+		data = data.Elem()
+	}
+
+	if data.Kind() != reflect.Struct {
+		return reflect.Value{}, ErrReflect.Derive("data is not a struct: %s", data.Kind())
 	}
 
 	var err error
-	fieldValue := dataValue.FieldByName(field)
+	fieldValue := data.FieldByName(field)
 	if !fieldValue.IsValid() {
 		err = ErrReflect.Derive("no field '%s'", field)
 	}
@@ -19,23 +22,14 @@ func GetStructFieldValue(data interface{}, field string) (reflect.Value, error) 
 	return fieldValue, err
 }
 
-func GetStructField(data interface{}, field string) (interface{}, error) {
-	fieldValue, err := GetStructFieldValue(data, field)
+func SetStructField(data reflect.Value, field string, value reflect.Value) (reflect.Value, error) {
+	fieldValue, err := GetStructField(data, field)
 	if err != nil {
-		return nil, err
-	}
-
-	return fieldValue.Interface(), nil
-}
-
-func SetStructFieldValue(data interface{}, field string, value reflect.Value) (interface{}, error) {
-	fieldValue, err := GetStructFieldValue(data, field)
-	if err != nil {
-		return nil, err
+		return reflect.Value{}, err
 	}
 
 	if !fieldValue.CanSet() {
-		return nil, ErrReflect.Derive("field '%s' can not be set", field)
+		return reflect.Value{}, ErrReflect.Derive("field '%s' can not be set", field)
 	}
 
 	untypedNil, typedNil := NilType(value)
@@ -54,7 +48,7 @@ func SetStructFieldValue(data interface{}, field string, value reflect.Value) (i
 				fieldValue.Set(convertedValue)
 
 			} else {
-				return nil, ErrReflect.Derive("field '%s' requires type %s, but %s",
+				return reflect.Value{}, ErrReflect.Derive("field '%s' requires type %s, but %s",
 					field, fieldValue.Type(), value.Type())
 			}
 
@@ -63,10 +57,5 @@ func SetStructFieldValue(data interface{}, field string, value reflect.Value) (i
 		}
 	}
 
-	return fieldValue.Interface(), nil
-}
-
-func SetStructField(data interface{}, field string, value interface{}) (interface{}, error) {
-	valueValue := reflect.ValueOf(value)
-	return SetStructFieldValue(data, field, valueValue)
+	return fieldValue, nil
 }

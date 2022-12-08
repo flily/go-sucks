@@ -20,7 +20,7 @@ type testWizardType struct {
 }
 
 func TestGetStructField(t *testing.T) {
-	hermione := testWizardType{
+	testData := testWizardType{
 		Name:  "Hermione Granger",
 		Born:  1979,
 		Blood: "muggle-born",
@@ -30,10 +30,11 @@ func TestGetStructField(t *testing.T) {
 			Wood:   "vine",
 		},
 	}
+	hermione := reflect.ValueOf(testData)
 
 	{
 		data, err := GetStructField(hermione, "born")
-		if data != nil {
+		if data.Kind() != reflect.Invalid {
 			t.Errorf("unexpected data: %v <=> %v", data, nil)
 		}
 
@@ -45,7 +46,7 @@ func TestGetStructField(t *testing.T) {
 	{
 		exp := 1979
 		data, err := GetStructField(hermione, "Born")
-		if data != exp {
+		if data.Interface() != exp {
 			t.Errorf("unexpected data: %v <=> %v", data, exp)
 		}
 
@@ -54,10 +55,10 @@ func TestGetStructField(t *testing.T) {
 		}
 	}
 
-	ptr := &hermione
+	ptr := reflect.ValueOf(&testData)
 	{
 		data, err := GetStructField(ptr, "born")
-		if data != nil {
+		if data.Kind() != reflect.Invalid {
 			t.Errorf("unexpected data: %v <=> %v", data, nil)
 		}
 
@@ -69,7 +70,7 @@ func TestGetStructField(t *testing.T) {
 	{
 		exp := 1979
 		data, err := GetStructField(ptr, "Born")
-		if data != exp {
+		if data.Interface() != exp {
 			t.Errorf("unexpected data: %v <=> %v", data, exp)
 		}
 
@@ -79,8 +80,19 @@ func TestGetStructField(t *testing.T) {
 	}
 }
 
+func TestGetStructFieldOnInteger(t *testing.T) {
+	data, err := GetStructField(reflect.ValueOf(42), "born")
+	if data.Kind() != reflect.Invalid {
+		t.Errorf("unexpected data: %v <=> %v", data, nil)
+	}
+
+	if err.Error() != "data is not a struct: int" {
+		t.Errorf("unexpected error: %s", err)
+	}
+}
+
 func TestSetStructField(t *testing.T) {
-	hermione := testWizardType{
+	testData := testWizardType{
 		Name:  "Hermione Granger",
 		Born:  1979,
 		Blood: "muggle-born",
@@ -90,10 +102,11 @@ func TestSetStructField(t *testing.T) {
 			Wood:   "vine",
 		},
 	}
+	hermione := reflect.ValueOf(testData)
 
 	{
-		data, err := SetStructField(hermione, "blood", "half-blood")
-		if data != nil {
+		data, err := SetStructField(hermione, "blood", reflect.ValueOf("half-blood"))
+		if data.Kind() != reflect.Invalid {
 			t.Errorf("unexpected data: %v <=> %v", data, nil)
 		}
 
@@ -104,8 +117,8 @@ func TestSetStructField(t *testing.T) {
 
 	{
 		// Can not update field of a copyed data
-		data, err := SetStructField(hermione, "Blood", "pure-blood")
-		if data != nil {
+		data, err := SetStructField(hermione, "Blood", reflect.ValueOf("pure-blood"))
+		if data.Kind() != reflect.Invalid {
 			t.Errorf("unexpected data: %v <=> %v", data, nil)
 		}
 
@@ -114,10 +127,10 @@ func TestSetStructField(t *testing.T) {
 		}
 	}
 
-	ptr := &hermione
+	ptr := reflect.ValueOf(&testData)
 	{
-		data, err := SetStructField(ptr, "blood", "half-blood")
-		if data != nil {
+		data, err := SetStructField(ptr, "blood", reflect.ValueOf("half-blood"))
+		if data.Kind() != reflect.Invalid {
 			t.Errorf("unexpected data: %v <=> %v", data, nil)
 		}
 
@@ -127,9 +140,10 @@ func TestSetStructField(t *testing.T) {
 	}
 
 	{
-		data, err := SetStructField(ptr, "Blood", "pure-blood")
-		if data != "pure-blood" {
-			t.Errorf("unexpected data: %v <=> %v", data, nil)
+		exp := "pure-blood"
+		data, err := SetStructField(ptr, "Blood", reflect.ValueOf("pure-blood"))
+		if data.Interface() != exp {
+			t.Errorf("unexpected data: %v <=> %v", data, exp)
 		}
 
 		if err != nil {
@@ -139,7 +153,7 @@ func TestSetStructField(t *testing.T) {
 }
 
 func TestSetStructFieldWithConvert(t *testing.T) {
-	hermione := &testWizardType{
+	testData := &testWizardType{
 		Name:  "Hermione Granger",
 		Born:  1979,
 		Blood: "muggle-born",
@@ -149,10 +163,11 @@ func TestSetStructFieldWithConvert(t *testing.T) {
 			Wood:   "vine",
 		},
 	}
+	hermione := reflect.ValueOf(testData)
 
 	{
-		data, err := SetStructField(hermione, "Born", int64(1999))
-		if data != 1999 {
+		data, err := SetStructField(hermione, "Born", reflect.ValueOf(int64(1999)))
+		if data.Interface() != 1999 {
 			t.Errorf("unexpected data: %v <=> %v", data, nil)
 		}
 
@@ -162,8 +177,8 @@ func TestSetStructFieldWithConvert(t *testing.T) {
 	}
 
 	{
-		data, err := SetStructField(hermione, "Born", "pure-blood")
-		if data != nil {
+		data, err := SetStructField(hermione, "Born", reflect.ValueOf("pure-blood"))
+		if data.Kind() != reflect.Invalid {
 			t.Errorf("unexpected data: %v <=> %v", data, nil)
 		}
 
@@ -183,17 +198,17 @@ func TestSetStructFieldWithConvert(t *testing.T) {
 		},
 	}
 
-	if hermione == expected {
+	if testData == expected {
 		t.Errorf("pointer must not be equal")
 	}
 
-	if !reflect.DeepEqual(hermione, expected) {
+	if !reflect.DeepEqual(testData, expected) {
 		t.Errorf("unexpected data: %v <=> %v", hermione, expected)
 	}
 }
 
 func TestSetStructFieldWithUntypedNil(t *testing.T) {
-	hermione := &testWizardType{
+	testData := &testWizardType{
 		Name:  "Hermione Granger",
 		Born:  1979,
 		Blood: "muggle-born",
@@ -203,13 +218,14 @@ func TestSetStructFieldWithUntypedNil(t *testing.T) {
 			Wood:   "vine",
 		},
 	}
+	hermione := reflect.ValueOf(testData)
 
-	data, err := SetStructField(hermione, "Wand", nil)
-	if data != (*testWandType)(nil) {
+	data, err := SetStructField(hermione, "Wand", reflect.ValueOf(nil))
+	if data.Interface() != (*testWandType)(nil) {
 		t.Errorf("unexpected data: %v (%T) <=> %v", data, data, nil)
 	}
 
-	if data != hermione.Wand {
+	if data.Interface() != testData.Wand {
 		t.Errorf("unexpected data: %v <=> %v", data, nil)
 	}
 
@@ -219,7 +235,7 @@ func TestSetStructFieldWithUntypedNil(t *testing.T) {
 }
 
 func TestSetStructFieldWithTypedNil(t *testing.T) {
-	hermione := &testWizardType{
+	testData := &testWizardType{
 		Name:  "Hermione Granger",
 		Born:  1979,
 		Blood: "muggle-born",
@@ -229,14 +245,15 @@ func TestSetStructFieldWithTypedNil(t *testing.T) {
 			Wood:   "vine",
 		},
 	}
+	hermione := reflect.ValueOf(testData)
 
 	var wand *testWandType
-	data, err := SetStructField(hermione, "Wand", wand)
-	if data != (*testWandType)(nil) {
+	data, err := SetStructField(hermione, "Wand", reflect.ValueOf(wand))
+	if data.Interface() != (*testWandType)(nil) {
 		t.Errorf("unexpected data: %v (%T) <=> %v", data, data, nil)
 	}
 
-	if data != hermione.Wand {
+	if data.Interface() != testData.Wand {
 		t.Errorf("unexpected data: %v <=> %v", data, nil)
 	}
 
