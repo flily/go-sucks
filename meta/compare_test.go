@@ -223,3 +223,37 @@ func TestValueEqualOnChannel(t *testing.T) {
 		t.Errorf("unexpected result: %v != %v", a, a)
 	}
 }
+
+func TestValueEqualOnMap(t *testing.T) {
+	a := map[string]int{"one": 1, "two": 2, "three": 3}
+	b := map[string]int{"one": 1, "two": 2, "three": 3}
+
+	if !Equal(a, b) {
+		t.Errorf("unexpected result: %v != %v", a, b)
+	}
+
+	c := map[string]int{"one": 1, "two": 2, "three": 4}
+	if Equal(a, c) {
+		t.Errorf("unexpected result: %v == %v", a, c)
+	}
+
+	d := map[string]int{"one": 1, "four": 2, "three": 3}
+	if Equal(a, d) {
+		t.Errorf("unexpected result: %v == %v", a, d)
+	}
+}
+
+func TestValueEqualOnNotDuplicatableValue(t *testing.T) {
+	ch := make(chan int)
+	a := map[interface{}]int{ch: 1}
+	b := map[interface{}]int{42: 1}
+
+	if Equal(a, b) {
+		t.Errorf("unexpected result: %v == %v", a, b)
+	}
+
+	if Equal(b, a) {
+		t.Errorf("unexpected result: %v == %v", b, a)
+	}
+
+}

@@ -38,22 +38,11 @@ func equalForMap(a reflect.Value, b reflect.Value) bool {
 		ai := a.MapIndex(copyKey)
 		bi := b.MapIndex(copyKey)
 
-		if ai.IsZero() || bi.IsZero() {
+		if !ai.IsValid() || !bi.IsValid() {
 			return false
 		}
 
 		if !equalForValue(ai, bi) {
-			return false
-		}
-	}
-
-	for _, key := range a.MapKeys() {
-		copyKey, err := duplicateValueInstance(key)
-		if err != nil {
-			return false
-		}
-
-		if _, ok := keys[copyKey.Interface()]; !ok {
 			return false
 		}
 	}
