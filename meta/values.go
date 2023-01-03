@@ -49,3 +49,8 @@ func (v Value) IsTypedNil() bool {
 	_, t := v.NilType()
 	return t
 }
+
+// Kind returns the kind of the value, equivalent to reflect.Value.Kind().
+func (v Value) Kind() reflect.Kind {
+	return v.value.Kind()
+}

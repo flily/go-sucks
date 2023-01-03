@@ -31,3 +31,12 @@ func TestValueIsNil(t *testing.T) {
 		}
 	}
 }
+
+func TestValueKind(t *testing.T) {
+	{
+		value := ValueOf(1)
+		if value.Kind() != reflect.Int {
+			t.Errorf("value.Kind() should be reflect.Int")
+		}
+	}
+}
