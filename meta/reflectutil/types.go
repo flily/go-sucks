@@ -11,10 +11,21 @@ func NilType(value reflect.Value) (bool, bool) {
 	case reflect.Invalid:
 		return true, false
 
-	case reflect.Chan, reflect.Func, reflect.Map, reflect.Ptr, reflect.UnsafePointer:
+	case reflect.Chan, reflect.Func, reflect.Map, reflect.UnsafePointer:
 		return false, value.IsNil()
 
-	case reflect.Interface, reflect.Slice:
+	case reflect.Ptr:
+		return false, value.IsNil()
+
+	case reflect.Interface:
+		elem := value.Elem()
+		if elem.Kind() == reflect.Invalid {
+			return true, false
+		}
+
+		return false, elem.IsNil()
+
+	case reflect.Slice:
 		return false, value.IsNil()
 
 	default:
