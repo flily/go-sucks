@@ -115,9 +115,9 @@ type testEmptyStruct struct{}
 func TestNilInArray(t *testing.T) {
 	array := []interface{}{
 		nil,                       // typed nil in struct, untyped nil when copy to local variable, go sucks
-		(*int)(nil),               // typed nil in struct, untyped nil when copy to local variable, go sucks
+		(*int)(nil),               // typed nil in struct, go sucks
 		(testEmptyInterface)(nil), // typed nil in struct, untyped nil when copy to local variable, go sucks
-		(*testEmptyStruct)(nil),   // typed nil in struct, untyped nil when copy to local variable, go sucks
+		(*testEmptyStruct)(nil),   // typed nil in struct, go sucks
 	}
 
 	valueArray := reflect.ValueOf(array)
