@@ -19,11 +19,17 @@ func NilType(value reflect.Value) (bool, bool) {
 
 	case reflect.Interface:
 		elem := value.Elem()
-		if elem.Kind() == reflect.Invalid {
-			return true, false
-		}
+		switch elem.Kind() {
+		case reflect.Invalid:
+			// (interface{})(nil)
+			return false, true
 
-		return false, elem.IsNil()
+		case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice:
+			return false, elem.IsNil()
+
+		default:
+			return false, false
+		}
 
 	case reflect.Slice:
 		return false, value.IsNil()

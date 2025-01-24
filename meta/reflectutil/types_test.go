@@ -114,22 +114,22 @@ type testEmptyStruct struct{}
 
 func TestNilInArray(t *testing.T) {
 	array := []interface{}{
-		nil,                       // untyped nil, go sucks
-		(*int)(nil),               // typed nil, go sucks
-		(testEmptyInterface)(nil), // untyped nil, go sucks
-		(*testEmptyStruct)(nil),   // typed nil, go sucks
+		nil,                       // typed nil in struct, untyped nil when copy to local variable, go sucks
+		(*int)(nil),               // typed nil in struct, untyped nil when copy to local variable, go sucks
+		(testEmptyInterface)(nil), // typed nil in struct, untyped nil when copy to local variable, go sucks
+		(*testEmptyStruct)(nil),   // typed nil in struct, untyped nil when copy to local variable, go sucks
 	}
 
 	valueArray := reflect.ValueOf(array)
 	{
-		valueD := array[0]            // untyped nil, go sucks
-		valueR := valueArray.Index(0) // untyped nil, go sucks
+		valueD := array[0]            // untyped nil after copy to local variable, go sucks
+		valueR := valueArray.Index(0) // typed nil, go sucks
 
 		if u, n := NilType(reflect.ValueOf(valueD)); !u || n {
 			t.Errorf("IsNilValue(array[0]) = %v, %v", u, n)
 		}
 
-		if u, n := NilType(valueR); !u || n {
+		if u, n := NilType(valueR); u || !n {
 			t.Errorf("IsNilValue(array.Index(0)) = %v, %v", u, n)
 		}
 	}
@@ -148,14 +148,14 @@ func TestNilInArray(t *testing.T) {
 	}
 
 	{
-		valueD := array[2]            // untyped nil, go sucks
-		valueR := valueArray.Index(2) // untyped nil, go sucks
+		valueD := array[2]            // untyped nil after copy to local variable, go sucks
+		valueR := valueArray.Index(2) // typed nil, go sucks
 
 		if u, n := NilType(reflect.ValueOf(valueD)); !u || n {
 			t.Errorf("IsNilValue(array[2]) = %v, %v", u, n)
 		}
 
-		if u, n := NilType(valueR); !u || n {
+		if u, n := NilType(valueR); u || !n {
 			t.Errorf("IsNilValue(array.Index(2)) = %v, %v", u, n)
 		}
 	}
