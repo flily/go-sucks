@@ -1,5 +1,6 @@
 package math
 
+// MaxInt64 returns the largest integer in a list of integers.
 func MaxInt64(nums ...int64) int64 {
 	result, found := int64(0), false
 
