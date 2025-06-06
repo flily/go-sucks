@@ -144,8 +144,10 @@ func ExampleIsNil_typed() {
 	fmt.Printf("IsNil(e4i) -> untyped=%v, typed=%v\n", isUntyped, isTyped) // IsNil(e4i) -> untyped=true, typed=false
 
 	// interface type initialized with concrete type nil is typed nil.
+	//nolint:staticcheck // SA4023
 	var e4c error = (*runtime.TypeAssertionError)(nil)
 	isUntyped, isTyped = IsNil(e4c)
+	//nolint:staticcheck // SA4023
 	fmt.Printf("e4c == nil: %v\n", e4c == nil)                             // e4c == nil: false
 	fmt.Printf("IsNil(e4c) -> untyped=%v, typed=%v\n", isUntyped, isTyped) // IsNil(e4c) -> untyped=false, typed=true
 
