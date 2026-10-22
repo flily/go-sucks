@@ -1,3 +1,3 @@
 module github.com/flily/go-sucks
 
-go 1.17
+go 1.27
