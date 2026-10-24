@@ -14,7 +14,7 @@ func NilType(value reflect.Value) (bool, bool) {
 	case reflect.Chan, reflect.Func, reflect.Map, reflect.UnsafePointer:
 		return false, value.IsNil()
 
-	case reflect.Ptr:
+	case reflect.Pointer:
 		return false, value.IsNil()
 
 	case reflect.Interface:
@@ -24,7 +24,7 @@ func NilType(value reflect.Value) (bool, bool) {
 			// (interface{})(nil)
 			return false, true
 
-		case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Ptr, reflect.Slice:
+		case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Pointer, reflect.Slice:
 			return false, elem.IsNil()
 
 		default:

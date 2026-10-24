@@ -28,7 +28,7 @@ func IsTypedNil(value interface{}) bool {
 // IsPointer returns result whether the value is a pointer.
 func IsPointer(v interface{}) bool {
 	value := reflect.ValueOf(v)
-	return value.Kind() == reflect.Ptr
+	return value.Kind() == reflect.Pointer
 }
 
 // IsStruct returns result whether the value is a struct.

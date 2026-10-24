@@ -95,7 +95,7 @@ func TestOrigineOf(t *testing.T) {
 		var inf ttTypeSayingInterface = ptr
 
 		v := reflect.ValueOf(inf)
-		if v.Kind() != reflect.Ptr {
+		if v.Kind() != reflect.Pointer {
 			t.Errorf("%s is not pointer", v.Kind())
 		}
 
@@ -128,7 +128,7 @@ func TestOrigineOf(t *testing.T) {
 		inf := &s
 
 		v := reflect.ValueOf(inf)
-		if v.Kind() != reflect.Ptr {
+		if v.Kind() != reflect.Pointer {
 			t.Errorf("%s is not pointer", v.Kind())
 		}
 

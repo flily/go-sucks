@@ -85,7 +85,7 @@ func ExampleIsNil_typed() {
 	fmt.Printf("IsNil(n1) -> untyped=%v, typed=%v\n", isUntyped, isTyped) // IsNil(n1) -> untyped=false, typed=true
 
 	// literal untyped nil directly returns from a function to interface type is untyped nil.
-	var e2 error = func() error {
+	e2 := func() error {
 		return nil
 	}()
 	isUntyped, isTyped = IsNil(e2)
@@ -93,7 +93,7 @@ func ExampleIsNil_typed() {
 	fmt.Printf("IsNil(e2) -> untyped=%v, typed=%v\n", isUntyped, isTyped) // IsNil(e2) -> untyped=true, typed=false
 
 	// literal untyped nil directly returns from a function to a concrete type is typed nil.
-	var n2 *runtime.TypeAssertionError = func() *runtime.TypeAssertionError {
+	n2 := func() *runtime.TypeAssertionError {
 		return nil
 	}()
 	isUntyped, isTyped = IsNil(n2)
@@ -101,7 +101,7 @@ func ExampleIsNil_typed() {
 	fmt.Printf("IsNil(n2) -> untyped=%v, typed=%v\n", isUntyped, isTyped) // IsNil(n2) -> untyped=false, typed=true
 
 	// literal untyped nil to interface directly returns from a function to interface type is untyped nil.
-	var e3i error = func() error {
+	e3i := func() error {
 		// untyped nil
 		var e error
 		return e
@@ -112,7 +112,7 @@ func ExampleIsNil_typed() {
 
 	// go sucks.
 	// literal untyped nil to concrete type directly returns from a function to a interface type is typed nil.
-	var e3c error = func() error {
+	e3c := func() error {
 		// untyped nil
 		var e *runtime.TypeAssertionError
 		return e
@@ -122,7 +122,7 @@ func ExampleIsNil_typed() {
 	fmt.Printf("IsNil(e3c) -> untyped=%v, typed=%v\n", isUntyped, isTyped) // IsNil(e3c) -> untyped=false, typed=true
 
 	// literal untyped nil to concrete type directly returns from a function to a concrete type is typed nil.
-	var n3 *runtime.TypeAssertionError = func() *runtime.TypeAssertionError {
+	n3 := func() *runtime.TypeAssertionError {
 		// untyped nil
 		var n *runtime.TypeAssertionError
 		return n
@@ -138,7 +138,7 @@ func ExampleIsNil_typed() {
 	fmt.Printf("IsNil(e4l) -> untyped=%v, typed=%v\n", isUntyped, isTyped) // IsNil(e4l) -> untyped=true, typed=false
 
 	// interface type initialized with interface type nil is untyped nil.
-	var e4i error = error(nil)
+	e4i := error(nil)
 	isUntyped, isTyped = IsNil(e4i)
 	fmt.Printf("e4i == nil: %v\n", e4i == nil)                             // e4i == nil: true
 	fmt.Printf("IsNil(e4i) -> untyped=%v, typed=%v\n", isUntyped, isTyped) // IsNil(e4i) -> untyped=true, typed=false
@@ -158,7 +158,7 @@ func ExampleIsNil_typed() {
 	fmt.Printf("IsNil(n4l) -> untyped=%v, typed=%v\n", isUntyped, isTyped) // IsNil(n4l) -> untyped=false, typed=true
 
 	// concrete type initialized with concrete type nil is untyped nil.
-	var n4c *runtime.TypeAssertionError = (*runtime.TypeAssertionError)(nil)
+	n4c := (*runtime.TypeAssertionError)(nil)
 	isUntyped, isTyped = IsNil(n4c)
 	fmt.Printf("n4c == nil: %v\n", n4c == nil)                             // n4c == nil: true
 	fmt.Printf("IsNil(n4c) -> untyped=%v, typed=%v\n", isUntyped, isTyped) // IsNil(n4c) -> untyped=false, typed=true

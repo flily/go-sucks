@@ -5,7 +5,7 @@ import (
 )
 
 func GetStructField(data reflect.Value, field string) (reflect.Value, error) {
-	if data.Kind() == reflect.Ptr {
+	if data.Kind() == reflect.Pointer {
 		data = data.Elem()
 	}
 

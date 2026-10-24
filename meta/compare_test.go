@@ -93,7 +93,7 @@ func TestValueEqualOnBool(t *testing.T) {
 }
 
 func TestValueEqualOnInt(t *testing.T) {
-	var a int = 42
+	a := 42
 
 	if !Equal(a, 42) {
 		t.Errorf("unexpected result, %v != %v", a, 42)

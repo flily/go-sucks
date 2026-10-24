@@ -105,7 +105,7 @@ func TestStructBasis(t *testing.T) {
 		var i ttIsStruct1Interface2 = &data
 
 		v := reflect.ValueOf(i)
-		if v.Kind() != reflect.Ptr {
+		if v.Kind() != reflect.Pointer {
 			t.Errorf("%s is not ptr: %s", v, v.Kind())
 		}
 	}
@@ -126,7 +126,7 @@ func TestStructBasis(t *testing.T) {
 		x := &i
 
 		v := reflect.ValueOf(*x)
-		if v.Kind() != reflect.Ptr {
+		if v.Kind() != reflect.Pointer {
 			t.Errorf("%s is not ptr: %s", v, v.Kind())
 		}
 	}

@@ -20,7 +20,7 @@ func IsInstance(value reflect.Value) bool {
 	case reflect.Interface:
 		return false
 
-	case reflect.Ptr:
+	case reflect.Pointer:
 		return value.IsNil()
 
 	default:
@@ -38,7 +38,7 @@ func DereferenceToInstance(value reflect.Value) (reflect.Value, []ReferenceInfo)
 		}
 
 		switch value.Kind() {
-		case reflect.Ptr:
+		case reflect.Pointer:
 			info.ElemType = ElemPointer
 
 		case reflect.Interface:
