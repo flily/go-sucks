@@ -23,7 +23,7 @@ func testFuncNumberArray[T OrderedNumber](t *testing.T, f func([]T) T, exp T) {
 
 		got := f(array)
 		if got != exp {
-			t.Errorf("testFuncNumber() = %v, want %v", got, exp)
+			t.Errorf("testFuncNumber[%T]() = %v, want %v", array[0], got, exp)
 		}
 	}
 }
