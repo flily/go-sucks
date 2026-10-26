@@ -7,7 +7,7 @@ import (
 )
 
 func TestValueEqualOnSimpleValue(t *testing.T) {
-	var a, b interface{}
+	var a, b any
 
 	a = 1
 	b = 1
@@ -245,8 +245,8 @@ func TestValueEqualOnMap(t *testing.T) {
 
 func TestValueEqualOnNotDuplicatableValue(t *testing.T) {
 	ch := make(chan int)
-	a := map[interface{}]int{ch: 1}
-	b := map[interface{}]int{42: 1}
+	a := map[any]int{ch: 1}
+	b := map[any]int{42: 1}
 
 	if Equal(a, b) {
 		t.Errorf("unexpected result: %v == %v", a, b)

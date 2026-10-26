@@ -54,7 +54,7 @@ func DereferenceToInstance(value reflect.Value) (reflect.Value, []ReferenceInfo)
 
 // ReferenceChainOf gets the instance of a value, dereference all levels.
 // Return final value, and dereferenced chain.
-func ReferenceChainOf(data interface{}) (reflect.Value, []ReferenceInfo) {
+func ReferenceChainOf(data any) (reflect.Value, []ReferenceInfo) {
 	value := reflect.ValueOf(data)
 	return DereferenceToInstance(value)
 }
@@ -62,7 +62,7 @@ func ReferenceChainOf(data interface{}) (reflect.Value, []ReferenceInfo) {
 // InstanceOf gets the actual instance of a value, dereference all levels.
 // If a nil pointer is got, return the reflect.Value represents this pointer. If an untyped nil is
 // got, return an invalid reflect.Value, which is returned by reflect.ValueOf().
-func InstanceOf(data interface{}) reflect.Value {
+func InstanceOf(data any) reflect.Value {
 	value := reflect.ValueOf(data)
 	instance, _ := DereferenceToInstance(value)
 	return instance

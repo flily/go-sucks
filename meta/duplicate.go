@@ -212,7 +212,7 @@ func DuplicateValueInstance(value reflect.Value) (reflect.Value, error) {
 	return duplicateValueInstance(valueInstance)
 }
 
-func Duplicate(data interface{}) (interface{}, error) {
+func Duplicate(data any) (any, error) {
 	dataValue := reflect.ValueOf(data)
 	if !dataValue.IsValid() {
 		return nil, ErrUntypedNil

@@ -12,7 +12,7 @@ type Value struct {
 	value reflect.Value
 }
 
-func ValueOf(v interface{}) Value {
+func ValueOf(v any) Value {
 	r := Value{
 		value: reflect.ValueOf(v),
 	}

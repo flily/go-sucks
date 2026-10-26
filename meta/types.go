@@ -8,31 +8,31 @@ import (
 
 // IsNil returns result whether the value is nil. It always returns true or false for every value,
 // and never panics like Value.IsNil(). It returns true when it is untyped nil and typed nil.
-func IsNil(value interface{}) (bool, bool) {
+func IsNil(value any) (bool, bool) {
 	v := reflect.ValueOf(value)
 	return reflectutil.NilType(v)
 }
 
 // IsUntypedNil returns result whether the value is an untyped nil.
 // An untyped nil is the nil literal, or an interface variable which is not bound to a value.
-func IsUntypedNil(value interface{}) bool {
+func IsUntypedNil(value any) bool {
 	return ValueOf(value).IsUntypedNil()
 }
 
 // IsTypedNil returns result whether the value is a typed nil.
 // A typed nil is a nil pointer that the type of the instance that points to can be determined.
-func IsTypedNil(value interface{}) bool {
+func IsTypedNil(value any) bool {
 	return ValueOf(value).IsTypedNil()
 }
 
 // IsPointer returns result whether the value is a pointer.
-func IsPointer(v interface{}) bool {
+func IsPointer(v any) bool {
 	value := reflect.ValueOf(v)
 	return value.Kind() == reflect.Pointer
 }
 
 // IsStruct returns result whether the value is a struct.
-func IsStruct(v interface{}) bool {
+func IsStruct(v any) bool {
 	instance := reflectutil.InstanceOf(v)
 
 	return instance.Kind() == reflect.Struct

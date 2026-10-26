@@ -19,7 +19,7 @@ func Is(err error, target error) bool {
 }
 
 // As is equivalent to system's errors.As.
-func As(err error, target interface{}) bool {
+func As(err error, target any) bool {
 	return sys_err.As(err, target)
 }
 
@@ -31,16 +31,16 @@ func Unwrap(err error) error {
 type UsableError interface {
 	error
 	Unwrap() error
-	Derive(format string, args ...interface{}) UsableError
+	Derive(format string, args ...any) UsableError
 	Is(target error) bool
-	As(target interface{}) bool
+	As(target any) bool
 }
 
 // GenericError is the error type for generic use.
 type GenericError struct {
 	Base    error
 	Message string
-	Data    interface{}
+	Data    any
 }
 
 func (e *GenericError) Error() string {
@@ -55,11 +55,11 @@ func (e *GenericError) Is(target error) bool {
 	return Is(e.Base, target)
 }
 
-func (e *GenericError) As(target interface{}) bool {
+func (e *GenericError) As(target any) bool {
 	return As(e.Base, target)
 }
 
-func (e *GenericError) Derive(format string, args ...interface{}) UsableError {
+func (e *GenericError) Derive(format string, args ...any) UsableError {
 	err := &GenericError{
 		Base:    e,
 		Message: fmt.Sprintf(format, args...),
@@ -67,7 +67,7 @@ func (e *GenericError) Derive(format string, args ...interface{}) UsableError {
 	return err
 }
 
-func DeriveError(base error, format string, args ...interface{}) UsableError {
+func DeriveError(base error, format string, args ...any) UsableError {
 	err := &GenericError{
 		Base:    base,
 		Message: fmt.Sprintf(format, args...),
@@ -76,6 +76,6 @@ func DeriveError(base error, format string, args ...interface{}) UsableError {
 }
 
 // NewError creates a new error from ErrGoSucksBase.
-func NewError(format string, args ...interface{}) UsableError {
+func NewError(format string, args ...any) UsableError {
 	return DeriveError(ErrGoSucksBase, format, args...)
 }

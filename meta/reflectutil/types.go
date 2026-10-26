@@ -21,7 +21,7 @@ func NilType(value reflect.Value) (bool, bool) {
 		elem := value.Elem()
 		switch elem.Kind() {
 		case reflect.Invalid:
-			// (interface{})(nil)
+			// (any)(nil)
 			return false, true
 
 		case reflect.Chan, reflect.Func, reflect.Interface, reflect.Map, reflect.Pointer, reflect.Slice:

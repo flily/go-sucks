@@ -12,7 +12,7 @@ var (
 	ErrUntypedNil     = ErrMetaError.Derive("untyped nil is unacceptable")
 )
 
-func NewMetaError(format string, args ...interface{}) error {
+func NewMetaError(format string, args ...any) error {
 	return ErrMetaError.Derive(format, args...)
 }
 

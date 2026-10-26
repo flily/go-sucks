@@ -27,7 +27,7 @@ func equalForMap(a reflect.Value, b reflect.Value) bool {
 		return false
 	}
 
-	keys := map[interface{}]bool{}
+	keys := map[any]bool{}
 	for _, key := range a.MapKeys() {
 		copyKey, err := duplicateValueInstance(key)
 		if err != nil {
@@ -151,7 +151,7 @@ func ValueEqual(a reflect.Value, b reflect.Value) bool {
 	return equalForValue(a, b)
 }
 
-func Equal(a interface{}, b interface{}) bool {
+func Equal(a any, b any) bool {
 	va := reflect.ValueOf(a)
 	vb := reflect.ValueOf(b)
 	return ValueEqual(va, vb)

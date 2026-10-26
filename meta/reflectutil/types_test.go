@@ -29,21 +29,21 @@ func TestNilType(t *testing.T) {
 	}
 
 	{
-		var v interface{} // untyped nil, go sucks
+		var v any // untyped nil, go sucks
 		if u, n := NilType(reflect.ValueOf(v)); !u || n {
-			t.Errorf("IsNilValue(interface{}(nil)) = %v, %v", u, n)
+			t.Errorf("IsNilValue(any(nil)) = %v, %v", u, n)
 		}
 	}
 
 	{
-		var v interface{} = (*int)(nil) // typed nil, go sucks
+		var v any = (*int)(nil) // typed nil, go sucks
 		if u, n := NilType(reflect.ValueOf(v)); u || !n {
-			t.Errorf("IsNilValue(interface{}(nil)) = %v, %v", u, n)
+			t.Errorf("IsNilValue(any(nil)) = %v, %v", u, n)
 		}
 	}
 
 	{
-		f := func(t *testing.T, v interface{}) {
+		f := func(t *testing.T, v any) {
 			if u, n := NilType(reflect.ValueOf(v)); !u || n {
 				t.Errorf("IsNilValue(%T(nil)) = %v, %v", v, u, n)
 			}
@@ -53,21 +53,21 @@ func TestNilType(t *testing.T) {
 	}
 
 	{
-		v := []interface{}{
-			(*int)(nil),         // typed nil
-			interface{}(nil),    // untyped nil, go sucks
-			(*interface{})(nil), // typed nil, go sucks
+		v := []any{
+			(*int)(nil), // typed nil
+			any(nil),    // untyped nil, go sucks
+			(*any)(nil), // typed nil, go sucks
 		}
 		if u, n := NilType(reflect.ValueOf(v[0])); u || !n {
-			t.Errorf("IsNilValue([]interface{}[0](nil)) = %v, %v", u, n)
+			t.Errorf("IsNilValue([]any[0](nil)) = %v, %v", u, n)
 		}
 
 		if u, n := NilType(reflect.ValueOf(v[1])); !u || n {
-			t.Errorf("IsNilValue([]interface{}[1](nil)) = %v, %v", u, n)
+			t.Errorf("IsNilValue([]any[1](nil)) = %v, %v", u, n)
 		}
 
 		if u, n := NilType(reflect.ValueOf(v[2])); u || !n {
-			t.Errorf("IsNilValue([]interface{}[2](nil)) = %v, %v", u, n)
+			t.Errorf("IsNilValue([]any[2](nil)) = %v, %v", u, n)
 		}
 	}
 
@@ -97,23 +97,23 @@ func TestIsNil(t *testing.T) {
 		t.Error("IsNil(pointer) should be true")
 	}
 
-	var ifaceUntyped interface{}
+	var ifaceUntyped any
 	if !IsNil(reflect.ValueOf(ifaceUntyped)) {
-		t.Error("IsNil(interface{}) should be true")
+		t.Error("IsNil(any) should be true")
 	}
 
-	var ifaceTyped interface{} = (*int)(nil)
+	var ifaceTyped any = (*int)(nil)
 	if !IsNil(reflect.ValueOf(ifaceTyped)) {
-		t.Error("IsNil(interface{}(nil)) should be true")
+		t.Error("IsNil(any(nil)) should be true")
 	}
 }
 
-type testEmptyInterface interface{}
+type testEmptyInterface any
 
 type testEmptyStruct struct{}
 
 func TestNilInArray(t *testing.T) {
-	array := []interface{}{
+	array := []any{
 		nil,                       // typed nil in struct, untyped nil when copy to local variable, go sucks
 		(*int)(nil),               // typed nil in struct, go sucks
 		(testEmptyInterface)(nil), // typed nil in struct, untyped nil when copy to local variable, go sucks

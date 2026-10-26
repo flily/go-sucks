@@ -316,7 +316,7 @@ func TestDuplicateNil(t *testing.T) {
 	}
 
 	{
-		var n *interface{}
+		var n *any
 
 		got, err := Duplicate(n)
 		if err != nil {
@@ -358,7 +358,7 @@ func TestDuplicateNilValue(t *testing.T) {
 }
 
 func TestDuplicateNormalData(t *testing.T) {
-	dataList := []interface{}{
+	dataList := []any{
 		0,
 		42,
 		0.0,
@@ -388,7 +388,7 @@ func TestDuplicateStructData(t *testing.T) {
 		S string
 		F float32
 		B bool
-		N interface{}
+		N any
 	}
 
 	s := testData{
@@ -479,7 +479,7 @@ func TestDuplicatePointerArray(t *testing.T) {
 
 func TestDuplicateArrayError(t *testing.T) {
 	c := make(chan int, 1)
-	a := []interface{}{1, c}
+	a := []any{1, c}
 
 	got, err := Duplicate(a)
 	if err == nil {
@@ -578,7 +578,7 @@ func TestDuplicateStructInterface(t *testing.T) {
 }
 
 func TestDuplicateAnyInterface(t *testing.T) {
-	a := []interface{}{
+	a := []any{
 		nil,
 		1,
 		1.2,
