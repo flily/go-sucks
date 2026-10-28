@@ -1,5 +1,8 @@
 package math
 
+// Zero returns the zero value for the specified ordered number type.
+// When T is a floating-point type, the positive parameter determines the sign of zero.
+// For integer types, the positive parameter is ignored.
 func Zero[T OrderedNumber](positive bool) T {
 	var r T
 	switch any(r).(type) {
