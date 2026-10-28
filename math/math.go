@@ -6,3 +6,7 @@ type OrderedNumber interface {
 		~float32 | ~float64 |
 		~uintptr
 }
+
+type FloatNumber interface {
+	~float32 | ~float64
+}
